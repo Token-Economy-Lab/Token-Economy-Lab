@@ -1,0 +1,64 @@
+---
+import { href } from '../data/navigation';
+const nodes = [
+  { label: '上下文', sub: 'CONTEXT', slug: 'context', x: 21, y: 21, color: 'mint' },
+  { label: '推理预算', sub: 'BUDGET', slug: 'budget', x: 70, y: 13, color: 'mint' },
+  { label: '模型路由', sub: 'ROUTING', slug: 'routing', x: 85, y: 49, color: 'blue' },
+  { label: '缓存复用', sub: 'CACHE', slug: 'cache', x: 63, y: 79, color: 'blue' },
+  { label: '推理与调度', sub: 'SERVING', slug: 'scheduling', x: 20, y: 73, color: 'gold' },
+];
+---
+<div class="token-graph" aria-label="Agent 执行连接上下文、预算、模型路由、缓存和推理调度的概念图">
+  <div class="graph-heading"><span class="mono">AGENT EXECUTION / COST MAP</span><span class="graph-stage">01 · 识别 Token 需求</span></div>
+  <div class="graph-surface">
+    <canvas class="graph-canvas" aria-hidden="true"></canvas>
+    <div class="graph-core"><span class="mono">TASK</span><strong>Agent 执行</strong><span>质量 · 成本 · 时延</span></div>
+    {nodes.map(n => <a href={href(`topics/${n.slug}/`)} class={`graph-node ${n.color}`} style={`--x:${n.x}%;--y:${n.y}%`} data-x={n.x} data-y={n.y} data-color={n.color}><span class="node-cross" aria-hidden="true">+</span><strong>{n.label}</strong><small>{n.sub}</small></a>)}
+  </div>
+  <div class="graph-bottom"><span>概念图 · 非实测数据</span><button type="button" data-replay>重新播放</button></div>
+</div>
+<script>
+  const graph = document.querySelector<HTMLElement>('.token-graph');
+  const canvas = graph?.querySelector<HTMLCanvasElement>('canvas');
+  if (graph && canvas) {
+    graph.classList.add('graph-enhanced');
+    const context = canvas.getContext('2d');
+    const nodeEls = [...graph.querySelectorAll<HTMLElement>('.graph-node')];
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let w = 0, h = 0, start = performance.now(), frame = 0;
+    const colors: Record<string, string> = {mint: '#3b9981', blue: '#547ba3', gold: '#bb956b'};
+    function draw(now: number) {
+      if (!context) return;
+      context.clearRect(0,0,w,h);
+      const p = reduced ? 1 : Math.min(1, (now - start) / 2400);
+      const cx = w*.49, cy = h*.44;
+      nodeEls.forEach((el, i) => {
+        const nx = w*Number(el.dataset.x)/100, ny = h*Number(el.dataset.y)/100;
+        const t = Math.max(0, Math.min(1, (p - i*.105)*2.2));
+        const color = colors[el.dataset.color || 'mint'];
+        context.globalAlpha = t*.38;
+        context.strokeStyle = color;
+        context.lineWidth = 1;
+        context.beginPath(); context.moveTo(cx,cy); context.lineTo(cx+(nx-cx)*t,cy+(ny-cy)*t); context.stroke();
+        context.globalAlpha = t*.6;
+        for(let j=0;j<90;j++) {
+          const angle = j*2.399963 + i, radius = 4 + Math.sqrt(j/90)*30;
+          const px = nx + Math.cos(angle)*radius, py = ny + Math.sin(angle)*radius*.72;
+          context.fillStyle = color; context.fillRect(px, py, 1.1, 1.1);
+        }
+        const progress = p < 1 ? Math.min(1,t*1.3) : 1;
+        context.globalAlpha = t;
+        context.beginPath(); context.arc(cx+(nx-cx)*progress,cy+(ny-cy)*progress,2.6,0,Math.PI*2); context.fillStyle=color;context.fill();
+        el.classList.toggle('node-visible', t>.1);
+      });
+      context.globalAlpha=1;
+      const stage = graph.querySelector('.graph-stage');
+      if(stage) stage.textContent = p<.33?'01 · 识别 Token 需求':p<.7?'02 · 关联执行成本':'03 · 回到任务产出';
+      if (p<1) frame=requestAnimationFrame(draw);
+    }
+    function resize() { const box=canvas!.getBoundingClientRect();w=box.width;h=box.height;const dpr=Math.min(devicePixelRatio,2);canvas!.width=w*dpr;canvas!.height=h*dpr;context?.setTransform(dpr,0,0,dpr,0,0);cancelAnimationFrame(frame);frame=requestAnimationFrame(draw); }
+    new ResizeObserver(resize).observe(canvas);
+    graph.querySelector('[data-replay]')?.addEventListener('click',()=>{start=performance.now();cancelAnimationFrame(frame);frame=requestAnimationFrame(draw);});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(frame);else {start=performance.now()-2400;frame=requestAnimationFrame(draw);}});
+  }
+</script>

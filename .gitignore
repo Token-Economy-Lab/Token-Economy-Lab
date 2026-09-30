@@ -1,0 +1,15 @@
+node_modules/
+.astro/
+build/
+dist/
+.env
+.env.*
+!.env.example
+.private/
+qa/
+*.pptx
+*.pdf
+*.docx
+.DS_Store
+*.pem
+*.key

@@ -1,0 +1,22 @@
+{
+  "name": "token-economy-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "build:plain": "astro build",
+    "build:examples": "node scripts/build.mjs examples",
+    "build": "node scripts/build.mjs private",
+    "preview": "node scripts/serve.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:plain": "node scripts/verify.mjs --plain",
+    "audit:public": "node scripts/audit-public.mjs",
+    "test:safety": "node scripts/test-build-safety.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.13.5",
+    "staticrypt": "^3.5.4"
+  },
+  "engines": { "node": ">=22.12.0" }
+}

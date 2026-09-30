@@ -1,0 +1,6 @@
+---
+import { topics, href } from '../data/navigation';
+const { limit } = Astro.props;
+const items = limit ? topics.slice(0, limit) : topics;
+---
+<div class="topic-grid">{items.map(t => <a href={href(`topics/${t.slug}/`)} class="topic-card" data-reveal><div class="topic-card-top"><span class="mono">{t.code}</span><span class={`topic-kind ${t.group}`}>{t.group==='demand'?'Token 需求':t.group==='supply'?'执行成本':'端到端评价'}</span></div><h3>{t.title}</h3><span class="topic-en">{t.en}</span><p>{t.desc}</p><div class="topic-tags">{t.tags.map(tag=><span>{tag}</span>)}</div></a>)}</div>

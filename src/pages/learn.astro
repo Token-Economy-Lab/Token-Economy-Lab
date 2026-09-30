@@ -1,0 +1,11 @@
+---
+import Shell from '../layouts/Shell.astro';
+import { href } from '../data/navigation';
+const steps=[
+ {n:'01',title:'建立共同语言',desc:'先区分 Token 消耗、实际计算与计费成本，明确什么是可验收的任务结果。',links:[['Token、计算与任务成本','notes/first-principles/'],['效益度量与评测','topics/evaluation/']]},
+ {n:'02',title:'沿着 Agent 执行过程阅读',desc:'把一次任务拆成上下文、模型调用、工具反馈与重试，理解预算在哪些环节被使用。',links:[['Agent 与上下文','topics/context/'],['推理与 Token 预算','topics/budget/'],['模型路由','topics/routing/']]},
+ {n:'03',title:'进入推理服务与资源层',desc:'理解同一份 Token 需求如何在不同缓存、执行引擎和调度策略下产生不同成本。',links:[['KV / Prefix Cache','topics/cache/'],['推理加速','topics/inference/'],['调度与资源管理','topics/scheduling/']]},
+ {n:'04',title:'从阅读走向比较与验证',desc:'回到原始论文与系统文档，记录实验条件、收益与局限，再形成可验证的研究问题。',links:[['论文与系统','library/'],['调研范围与证据标准','notes/survey-framework/'],['调研报告','reports/']]},
+];
+---
+<Shell active="learn/" title="学习路径"><header class="page-intro shell-width" data-reveal><span class="eyebrow">A GUIDED READING PATH</span><h1>从理解一次任务开始</h1><p>面向新加入的研究成员。按顺序建立基础，也可以从已有知识出发直接进入专题。</p></header><div class="path-list shell-width">{steps.map(s=><section class="path-step" data-reveal><span class="step-number">{s.n}</span><div><h2>{s.title}</h2><p>{s.desc}</p><div class="path-links">{s.links.map(([label,path])=><a href={href(path)}>{label}</a>)}</div></div></section>)}</div></Shell>

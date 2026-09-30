@@ -1,0 +1,5 @@
+---
+import Shell from '../layouts/Shell.astro';
+import { href } from '../data/navigation';
+---
+<Shell active="library/" title="论文与系统"><header class="page-intro shell-width" data-reveal><span class="eyebrow">PAPERS & SYSTEMS</span><h1>论文与系统资料库</h1><p>把方法、实现和实验条件放在一起阅读，保留每个结论的来源与适用边界。</p></header><div class="shell-width"><div class="content-notice" data-reveal>当前正在确定网站设计与资料结构。文献调研将在这一阶段完成后开展，尚未入库论文条目。</div><div class="library-layout"><section class="empty-library" data-reveal><span class="mono">THE COLLECTION STARTS HERE</span><h2>为每项工作保留完整证据</h2><p>后续条目将关联所属技术路线、原始论文、代码与实验说明。未经核验的信息会明确标注，不计入调研结论。</p><div><a href={href('notes/survey-framework/')} class="text-link">阅读入库与核验标准</a></div></section><aside class="library-guide" data-reveal><h3>每个条目回答的问题</h3><dl><dt>问题与方法</dt><dd>解决什么问题，方法如何工作。</dd><dt>成本与结果</dt><dd>优化哪部分成本，是否影响任务效果。</dd><dt>实验与证据</dt><dd>任务、模型、资源、基线与评价条件。</dd><dt>局限与研究启发</dt><dd>何时有效，哪些结论仍需验证。</dd></dl></aside></div></div></Shell>

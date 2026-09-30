@@ -1,0 +1,51 @@
+name: Check public code and request publication
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  example-checks:
+    name: Example build and audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run audit:public
+      - run: npm run test:safety
+      - run: npm run build:examples
+  request-publication:
+    name: Request private publication
+    needs: example-checks
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Dispatch the checked code commit
+        env:
+          DISPATCH_TOKEN: ${{ secrets.PRIVATE_PUBLISH_TOKEN }}
+          CODE_SHA: ${{ github.sha }}
+        run: |
+          node --input-type=module <<'JS'
+          const token = process.env.DISPATCH_TOKEN;
+          if (!token) throw new Error('Configure PRIVATE_PUBLISH_TOKEN with Actions write access to the private content repository.');
+          if (!/^[a-f0-9]{40}$/.test(process.env.CODE_SHA)) throw new Error('Invalid code commit.');
+          const response = await fetch('https://api.github.com/repos/Token-Economy-Lab/token-economy-lab-private/actions/workflows/deploy.yml/dispatches', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ref: 'main', inputs: { code_sha: process.env.CODE_SHA } }),
+          });
+          if (!response.ok) throw new Error(`Private publication dispatch failed (${response.status}).`);
+          console.log('Requested private publication of the checked code commit.');
+          JS

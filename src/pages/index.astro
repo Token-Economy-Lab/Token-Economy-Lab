@@ -1,0 +1,26 @@
+---
+import Shell from '../layouts/Shell.astro';
+import TokenGraph from '../components/TokenGraph.astro';
+import TopicCards from '../components/TopicCards.astro';
+import { href } from '../data/navigation';
+---
+<Shell active="" title="研究地图">
+  <section class="home-hero shell-width">
+    <div class="hero-copy" data-reveal>
+      <div class="eyebrow">RESEARCH & LEARNING ATLAS <span>2026</span></div>
+      <h1>Token<br /><em>Economy.</em></h1>
+      <h2>面向 Agent 的成本与效益优化</h2>
+      <p>沿着一次任务的执行过程，理解 Token 如何被消耗、计算如何被复用，以及有限预算如何换来有效产出。</p>
+      <div class="hero-actions"><a class="button-primary" href={href('learn/')}>从学习路径开始</a><a class="button-secondary" href="#research-map">浏览技术地图</a></div>
+      <div class="hero-caption"><span class="mono">当前阶段</span><span>知识库框架与设计预览</span></div>
+    </div>
+    <TokenGraph />
+  </section>
+  <div class="principle-strip shell-width" data-reveal><div><span class="mono">01 / DEMAND</span><strong>理解 Token 需求</strong></div><span class="strip-rule" aria-hidden="true"></span><div><span class="mono">02 / COMPUTE</span><strong>降低执行成本</strong></div><span class="strip-rule" aria-hidden="true"></span><div><span class="mono">03 / OUTCOME</span><strong>验证任务产出</strong></div></div>
+  <section id="research-map" class="section-block shell-width">
+    <div class="section-heading" data-reveal><div><span class="eyebrow">THE RESEARCH MAP</span><h2>沿着执行链路，找到优化位置</h2></div><p>从应用与推理策略到服务基础设施，<br />用同一套任务级评价口径连接各个方向。</p></div>
+    <TopicCards />
+  </section>
+  <section class="reading-entry shell-width" data-reveal><div><span class="eyebrow">START WITH A QUESTION</span><h2>为什么 Token 更少，<br />成本却未必更低？</h2><p>先区分 Token 数量、计费口径与实际计算，再讨论优化收益。</p><a class="text-link" href={href('notes/first-principles/')}>阅读基础笔记</a></div><div class="reading-formula"><span class="mono">THE COMMON GROUND</span><p>单位成功任务成本</p><strong>总执行成本 <span>÷</span> 成功任务数</strong><small>在相同任务质量与 SLA 门槛下比较</small></div></section>
+  <section class="section-block shell-width compact-section"><div class="section-heading" data-reveal><div><span class="eyebrow">WAYS TO EXPLORE</span><h2>把阅读积累为研究判断</h2></div></div><div class="explore-grid"><a href={href('learn/')} data-reveal><span class="mono">LEARN</span><h3>系统学习</h3><p>从概念、执行链路到技术专题。</p></a><a href={href('library/')} data-reveal><span class="mono">COMPARE</span><h3>论文与系统</h3><p>按问题、证据和适用条件比较工作。</p></a><a href={href('reports/')} data-reveal><span class="mono">SYNTHESIZE</span><h3>形成调研报告</h3><p>保留来源，整理结论与待验证问题。</p></a></div></section>
+</Shell>
