@@ -9,11 +9,11 @@ export const topics = [
 ];
 
 export const nav = [
-  { title: '研究地图', path: '' },
+  { title: '学习地图', path: '' },
   { title: '学习路径', path: 'learn/' },
   { title: '技术专题', path: 'topics/' },
-  { title: '论文与系统', path: 'library/' },
-  { title: '调研报告', path: 'reports/' },
+  { title: '论文精读', path: 'library/' },
+  { title: '业务与系统', path: 'systems/' },
 ];
 
 export const base = import.meta.env.BASE_URL;

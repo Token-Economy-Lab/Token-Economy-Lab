@@ -1,0 +1,23 @@
+---
+import { render } from 'astro:content';
+import Shell from './Shell.astro';
+import { topics } from '../data/navigation';
+import { labels, materialHref, type Material, publishedMaterials } from '../data/materials';
+const { entry } = Astro.props as { entry: Material };
+const { Content, headings } = await render(entry);
+const all = await publishedMaterials();
+const hasGuide = (id: string) => all.some(e => e.id === `guides/${id}`);
+const readingOrder = ['guide', 'tutorial', 'paper', 'system', 'case', 'analysis'];
+const related = all.filter(e => e.id !== entry.id && e.data.kind !== 'topic' && e.data.topics.some(t => entry.data.topics.includes(t))).sort((a, b) => readingOrder.indexOf(a.data.kind) - readingOrder.indexOf(b.data.kind));
+const prerequisites = entry.data.prerequisites.map(id => all.find(e => e.id === id)!);
+const active = entry.data.kind === 'paper' ? 'library/' : ['system', 'case'].includes(entry.data.kind) ? 'systems/' : entry.data.kind === 'topic' ? 'topics/' : 'learn/';
+---
+<Shell title={entry.data.title} description={entry.data.description} active={active} wide><div class="doc-layout">
+  <aside class="doc-sidebar"><a class="sidebar-root" href="/learn/">学习路径</a>{hasGuide('learning-map') && <a href="/materials/guides/learning-map/">阅读地图</a>}{hasGuide('glossary') && <a href="/materials/guides/glossary/">术语与指标</a>}<a href="/notes/first-principles/">Token、计算与任务成本</a><span class="sidebar-label">技术专题</span>{topics.map(t => <a class:list={{ selected: entry.id === t.slug }} href={`/topics/${t.slug}/`}>{t.title}</a>)}<div class="sidebar-divider"></div><a href="/library/">论文精读</a><a href="/systems/">业务与系统</a><a href="/reports/">比较与研究问题</a></aside>
+  <article class="doc-article"><div class="breadcrumb"><a href="/">学习地图</a><span>/</span><a href={active === 'topics/' ? '/topics/' : `/${active}`}>{labels[entry.data.kind]}</a></div><div class="article-meta"><span class="eyebrow">{labels[entry.data.kind]} / {entry.data.level}</span><span class="note-status">{entry.data.status}</span></div><h1>{entry.data.title}</h1><p class="article-lead">{entry.data.description}</p><div class="article-submeta">更新于 {entry.data.updated}<span>·</span>阅读约 {entry.data.minutes} 分钟</div>
+  {prerequisites.length > 0 && <div class="prerequisite-box"><span>前置阅读</span>{prerequisites.map(e => <a href={materialHref(e)}>{e.data.title}</a>)}</div>}
+  <div class="prose"><Content /></div>
+  {related.length > 0 && <section class="related-reading"><h2>关联阅读</h2>{related.map(e => <a href={materialHref(e)}><span>{labels[e.data.kind]}</span>{e.data.title}</a>)}</section>}
+  <div class="article-bottom"><a href="/learn/">返回学习路径</a><a href="/reports/">比较方法与研究问题</a></div></article>
+  <aside class="toc"><span class="sidebar-label">本页内容</span>{headings.filter(h => h.depth === 2).map(h => <a href={`#${h.slug}`}>{h.text}</a>)}</aside>
+</div></Shell>

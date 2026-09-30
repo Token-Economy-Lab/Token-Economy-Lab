@@ -22,6 +22,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run audit:public
       - run: npm run test:safety
+      - run: npm run test:content
       - run: npm run build:examples
   request-publication:
     name: Request private publication

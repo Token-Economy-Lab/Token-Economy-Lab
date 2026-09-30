@@ -1,6 +1,6 @@
-import { mkdtemp, mkdir, writeFile, cp, rm, stat } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, cp, rm, stat, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 
@@ -9,6 +9,7 @@ const root = await mkdtemp(join(tmpdir(), 'token-economy-safety-'));
 try {
   const code = join(root, 'code'), notes = join(root, 'notes');
   await mkdir(code);
+  await symlink(resolve('node_modules'), join(code, 'node_modules'), 'dir');
   await cp('scripts', join(code, 'scripts'), { recursive: true });
   await cp('examples', join(code, 'examples'), { recursive: true });
   await mkdir(notes);

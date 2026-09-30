@@ -31,6 +31,12 @@ try {
   run('verify.mjs', 'Unencrypted note content');
   run('verify-release.mjs', 'Release files changed');
   await writeFile(gatePath, gate);
+  const draftFragments = JSON.parse(await readFile(join(root, 'build/draft-fragments.json'), 'utf8'));
+  if (draftFragments.length) {
+    await writeFile(gatePath, gate + draftFragments[0]);
+    run('verify.mjs', 'Unpublished draft');
+    await writeFile(gatePath, gate);
+  }
   const missing = join(root, 'dist/topics/cache/index.html');
   const encrypted = await readFile(missing);
   await rm(missing);

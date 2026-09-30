@@ -1,11 +1,15 @@
 ---
 import Shell from '../layouts/Shell.astro';
-import { href } from '../data/navigation';
-const steps=[
- {n:'01',title:'建立共同语言',desc:'先区分 Token 消耗、实际计算与计费成本，明确什么是可验收的任务结果。',links:[['Token、计算与任务成本','notes/first-principles/'],['效益度量与评测','topics/evaluation/']]},
- {n:'02',title:'沿着 Agent 执行过程阅读',desc:'把一次任务拆成上下文、模型调用、工具反馈与重试，理解预算在哪些环节被使用。',links:[['Agent 与上下文','topics/context/'],['推理与 Token 预算','topics/budget/'],['模型路由','topics/routing/']]},
- {n:'03',title:'进入推理服务与资源层',desc:'理解同一份 Token 需求如何在不同缓存、执行引擎和调度策略下产生不同成本。',links:[['KV / Prefix Cache','topics/cache/'],['推理加速','topics/inference/'],['调度与资源管理','topics/scheduling/']]},
- {n:'04',title:'从阅读走向比较与验证',desc:'回到原始论文与系统文档，记录实验条件、收益与局限，再形成可验证的研究问题。',links:[['论文与系统','library/'],['调研范围与证据标准','notes/survey-framework/'],['调研报告','reports/']]},
+import MaterialCards from '../components/MaterialCards.astro';
+import { publishedMaterials } from '../data/materials';
+const entries = await publishedMaterials();
+const steps = [
+ {n:'01', title:'先建立成本分析的共同语言', desc:'读懂任务、模型请求与推理服务的三个层次，区分 Token、计算、费用与有效产出。', links:[['阅读地图','/materials/guides/learning-map/'],['Token、计算与任务成本','/notes/first-principles/'],['术语与指标','/materials/guides/glossary/']]},
+ {n:'02', title:'沿七个方向建立技术全景', desc:'从执行轨迹进入预算与路由，再理解缓存、加速和调度；每个专题都标注深入程度与后续阅读。', links:[['技术专题','/topics/'],['当前研究现状','/reports/']]},
+ {n:'03', title:'深入缓存复用与 Agent 预算', desc:'按教程、机制练习、论文精读的顺序阅读，先解释方法，再分析实验与适用边界。', links:[['缓存主线','/topics/cache/'],['预算主线','/topics/budget/'],['论文精读','/library/']]},
+ {n:'04', title:'用业务案例检验理解', desc:'把一次 RAG、故障诊断或编码任务拆成成本链路，比较可用策略并列出需要验证的数据。', links:[['业务与系统','/systems/'],['方法比较与研究问题','/reports/']]}
 ];
+const publishedPaths = new Set(entries.map(e => `/materials/${e.id}/`));
+for (const step of steps) step.links = step.links.filter(([, path]) => !path.startsWith('/materials/') || publishedPaths.has(path));
 ---
-<Shell active="learn/" title="学习路径"><header class="page-intro shell-width" data-reveal><span class="eyebrow">A GUIDED READING PATH</span><h1>从理解一次任务开始</h1><p>面向新加入的研究成员。按顺序建立基础，也可以从已有知识出发直接进入专题。</p></header><div class="path-list shell-width">{steps.map(s=><section class="path-step" data-reveal><span class="step-number">{s.n}</span><div><h2>{s.title}</h2><p>{s.desc}</p><div class="path-links">{s.links.map(([label,path])=><a href={href(path)}>{label}</a>)}</div></div></section>)}</div></Shell>
+<Shell active="learn/" title="学习路径"><header class="page-intro shell-width" data-reveal><span class="eyebrow">TWO PATHS, SHARED EVIDENCE</span><h1>从机制理解走向研究判断</h1><p>默认熟悉 LLM 与 Agent。优化方向入门者按顺序阅读；研究者从论文、系统和比较分析进入，随时返回教程补齐机制。</p></header><div class="learning-audiences shell-width"><a href="#starter-path" data-reveal><span class="mono">LEARN THE MECHANISMS</span><h2>优化方向入门</h2><p>机制解释 → 完整算例 → 练习解答 → 业务推演</p></a><a href="#research-path" data-reveal><span class="mono">FOLLOW THE EVIDENCE</span><h2>开展相关研究</h2><p>代表方法 → 原始证据 → 适用边界 → 验证方案</p></a></div><div id="starter-path" class="path-list shell-width">{steps.map(s => <section class="path-step" data-reveal><span class="step-number">{s.n}</span><div><h2>{s.title}</h2><p>{s.desc}</p><div class="path-links">{s.links.map(([label,path]) => <a href={path}>{label}</a>)}</div></div></section>)}</div><section class="shell-width collection-section"><div class="collection-heading"><h2>深入教程与学习指南</h2><span>按前置阅读连接知识</span></div><MaterialCards entries={entries.filter(e => ['guide','tutorial'].includes(e.data.kind) && e.id !== 'first-principles')} /></section><section id="research-path" class="shell-width collection-section"><div class="collection-heading"><h2>研究者阅读入口</h2><span>来源 · 比较 · 问题 · 验证方案</span></div><MaterialCards entries={entries.filter(e => e.data.kind === 'analysis')} /></section></Shell>

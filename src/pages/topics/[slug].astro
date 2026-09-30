@@ -1,12 +1,8 @@
 ---
-import { getCollection, render } from 'astro:content';
-import Shell from '../../layouts/Shell.astro';
-import { topics, href } from '../../data/navigation';
-export async function getStaticPaths() {
-  const notes = await getCollection('notes');
-  return topics.map(topic => ({ params: { slug: topic.slug }, props: { topic, entry: notes.find(n => n.id === topic.slug)! } }));
-}
-const { topic, entry } = Astro.props;
-const { Content, headings } = await render(entry);
+import Material from '../../layouts/Material.astro';
+import { topics } from '../../data/navigation';
+import { publishedMaterials } from '../../data/materials';
+export async function getStaticPaths() { const entries = await publishedMaterials(); return topics.map(topic => ({ params: { slug: topic.slug }, props: { entry: entries.find(e => e.id === topic.slug)! } })); }
+const { entry } = Astro.props;
 ---
-<Shell title={topic.title} active="topics/" wide><div class="doc-layout"><aside class="doc-sidebar"><a class="sidebar-root" href={href('topics/')}>技术专题</a><span class="sidebar-label">OPTIMIZATION LANDSCAPE</span>{topics.map(t=><a class:list={{selected:t.slug===topic.slug}} href={href(`topics/${t.slug}/`)}><span class="mono">{t.code}</span>{t.title}</a>)}<div class="sidebar-divider"></div><a href={href('learn/')}>学习路径</a><a href={href('notes/first-principles/')}>基础概念与评价口径</a></aside><article class="doc-article"><div class="breadcrumb"><a href={href()}>研究地图</a><span>/</span><a href={href('topics/')}>技术专题</a><span>/</span>{topic.title}</div><div class="article-meta"><span class="eyebrow">{topic.en}</span><span class="note-status">{entry.data.status}</span></div><h1>{topic.title}</h1><p class="article-lead">{topic.desc}</p><div class="article-submeta">更新于 {entry.data.updated}<span>·</span>阅读约 {entry.data.minutes} 分钟</div><div class="prose"><Content /></div><div class="article-bottom"><span>后续补充经核验的论文与系统资料</span><a href={href('library/')}>查看资料库</a></div></article><aside class="toc"><span class="sidebar-label">本页内容</span>{headings.filter(h=>h.depth===2).map(h=><a href={`#${h.slug}`}>{h.text}</a>)}<div class="toc-note">专题框架用于明确调研范围。<br />研究结论将在核验来源后填入。</div></aside></div></Shell>
+<Material entry={entry} />

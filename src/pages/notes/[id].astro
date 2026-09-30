@@ -1,9 +1,7 @@
 ---
-import { getCollection, render } from 'astro:content';
-import Shell from '../../layouts/Shell.astro';
-import { topics, href } from '../../data/navigation';
-export async function getStaticPaths() { const entries=await getCollection('notes');return entries.filter(e=>e.data.section==='foundations').map(entry=>({params:{id:entry.id},props:{entry}})); }
+import Material from '../../layouts/Material.astro';
+import { publishedMaterials } from '../../data/materials';
+export async function getStaticPaths() { return (await publishedMaterials()).filter(e => ['first-principles', 'survey-framework'].includes(e.id)).map(entry => ({ params: { id: entry.id }, props: { entry } })); }
 const { entry } = Astro.props;
-const { Content, headings }=await render(entry);
 ---
-<Shell title={entry.data.title} active={entry.id==='survey-framework'?'reports/':'learn/'} wide><div class="doc-layout"><aside class="doc-sidebar"><a class="sidebar-root" href={href('learn/')}>学习路径</a><span class="sidebar-label">FOUNDATIONS</span><a class:list={{selected:entry.id==='first-principles'}} href={href('notes/first-principles/')}>Token、计算与任务成本</a><a class:list={{selected:entry.id==='survey-framework'}} href={href('notes/survey-framework/')}>调研范围与证据标准</a><div class="sidebar-divider"></div><span class="sidebar-label">技术专题</span>{topics.map(t=><a href={href(`topics/${t.slug}/`)}>{t.title}</a>)}</aside><article class="doc-article"><div class="breadcrumb"><a href={href()}>研究地图</a><span>/</span><a href={href('learn/')}>学习路径</a><span>/</span>基础笔记</div><div class="article-meta"><span class="eyebrow">FIRST PRINCIPLES</span><span class="note-status">{entry.data.status}</span></div><h1>{entry.data.title}</h1><p class="article-lead">{entry.data.description}</p><div class="article-submeta">更新于 {entry.data.updated}<span>·</span>阅读约 {entry.data.minutes} 分钟</div><div class="prose"><Content /></div><div class="article-bottom"><span>继续探索优化发生的位置</span><a href={href('topics/')}>浏览技术专题</a></div></article><aside class="toc"><span class="sidebar-label">本页内容</span>{headings.filter(h=>h.depth===2).map(h=><a href={`#${h.slug}`}>{h.text}</a>)}</aside></div></Shell>
+<Material entry={entry} />

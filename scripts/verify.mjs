@@ -1,7 +1,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { resolve, relative, extname } from 'node:path';
 import assert from 'node:assert/strict';
-import { assetExtensions, routes } from './policy.mjs';
+import { assetExtensions, routes as baselineRoutes } from './policy.mjs';
 
 const plain = resolve('build/plain'), dist = resolve('dist');
 const site = 'https://token-economy-lab.github.io';
@@ -15,11 +15,19 @@ async function files(root) {
   return out;
 }
 const rawFiles = await files(plain), html = rawFiles.filter(p => p.endsWith('.html'));
+const routes = JSON.parse(await readFile('build/expected-routes.json', 'utf8'));
+for (const route of [...baselineRoutes, '/systems/']) assert(routes.includes(route), 'Legacy route was removed.');
 const expected = routes.map(route => route.slice(1) + 'index.html').sort();
-assert.deepEqual(html.map(file => relative(plain, file)).sort(), expected, 'Expected all 14 site routes.');
+assert.deepEqual(html.map(file => relative(plain, file)).sort(), expected, 'Expected all published site routes.');
 const privateFragments = [];
+const draftFragments = JSON.parse(await readFile('build/draft-fragments.json', 'utf8'));
+for (const file of rawFiles.filter(p => ['.html', '.js', '.css', '.svg', '.json', '.txt'].includes(extname(p)))) {
+  const data = await readFile(file, 'utf8');
+  for (const fragment of draftFragments) assert(!data.includes(fragment), 'Unpublished draft in output.');
+}
 for (const file of html) {
   const data = await readFile(file, 'utf8');
+  for (const fragment of draftFragments) assert(!data.includes(fragment), 'Unpublished draft in output.');
   assert(!data.includes('/token-economy/'), 'Old project base path remains.');
   const pagePath = '/' + relative(plain, file).replace(/index\.html$/, '');
   for (const match of data.matchAll(/(?:href|src)="([^"]+)"/g)) {
@@ -58,6 +66,7 @@ if (process.argv.includes('--plain')) {
     assert(ext === '.html' || assetExtensions.has(ext) || ['robots.txt', '.nojekyll'].includes(path), 'Unapproved public asset.');
     if (['.woff', '.woff2'].includes(ext)) continue;
     const data = await readFile(file, 'utf8');
+    for (const fragment of draftFragments) assert(!data.includes(fragment), 'Unpublished draft in public output.');
     assert(!data.includes('STATICRYPT_PASSWORD='), 'Password assignment in output.');
     if (process.env.STATICRYPT_PASSWORD) assert(!data.includes(process.env.STATICRYPT_PASSWORD), 'Password in output.');
     for (const fragment of privateFragments) assert(!data.includes(fragment), 'Unencrypted note content in output.');

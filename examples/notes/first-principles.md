@@ -5,6 +5,11 @@ section: foundations
 minutes: 1
 status: 待核验
 updated: '2026-09-30'
+kind: guide
+level: 入门
+topics: [evaluation]
+prerequisites: []
+publish: true
 ---
 <!-- PUBLIC_EXAMPLE_CONTENT -->
 

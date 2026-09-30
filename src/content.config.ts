@@ -11,6 +11,11 @@ const notes = defineCollection({
     minutes: z.number(),
     status: z.enum(['基础笔记', '专题框架', '已核验', '待核验']),
     updated: z.string(),
+    kind: z.enum(['guide', 'topic', 'tutorial', 'paper', 'system', 'case', 'analysis']).default('guide'),
+    level: z.enum(['入门', '进阶', '研究']).default('入门'),
+    topics: z.array(z.enum(['context', 'budget', 'routing', 'cache', 'inference', 'scheduling', 'evaluation'])).default([]),
+    prerequisites: z.array(z.string()).default([]),
+    publish: z.boolean().optional(),
   }),
 });
 

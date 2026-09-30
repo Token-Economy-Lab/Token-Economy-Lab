@@ -1,0 +1,7 @@
+---
+import Material from '../../layouts/Material.astro';
+import { publishedMaterials } from '../../data/materials';
+export async function getStaticPaths() { const legacy = ['context', 'budget', 'routing', 'cache', 'inference', 'scheduling', 'evaluation', 'first-principles', 'survey-framework']; return (await publishedMaterials()).filter(e => !legacy.includes(e.id)).map(entry => ({ params: { id: entry.id }, props: { entry } })); }
+const { entry } = Astro.props;
+---
+<Material entry={entry} />

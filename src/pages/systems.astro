@@ -1,0 +1,7 @@
+---
+import Shell from '../layouts/Shell.astro';
+import MaterialCards from '../components/MaterialCards.astro';
+import { publishedMaterials } from '../data/materials';
+const entries = await publishedMaterials();
+---
+<Shell active="systems/" title="业务与系统"><header class="page-intro shell-width" data-reveal><span class="eyebrow">FROM MECHANISMS TO WORKLOADS</span><h1>把技术放回任务流程</h1><p>沿着架构、执行链路和业务验收条件，理解优化能在哪里发生，以及实施前需要什么证据。</p></header><div class="shell-width collection-body"><section class="collection-section"><div class="collection-heading"><h2>系统与参考实现</h2><span>架构 · 配置 · 指标 · 实施条件</span></div><MaterialCards entries={entries.filter(e => e.data.kind === 'system')} /></section><section class="collection-section"><div class="collection-heading"><h2>业务案例推演</h2><span>目标 · 成本位置 · 策略 · 验证数据</span></div><MaterialCards entries={entries.filter(e => e.data.kind === 'case')} /></section><a class="text-link" href="/reports/">进入方法比较与研究问题</a></div></Shell>

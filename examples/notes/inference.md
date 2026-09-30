@@ -5,6 +5,11 @@ section: topics
 minutes: 1
 status: 待核验
 updated: '2026-09-30'
+kind: topic
+level: 入门
+topics: [inference]
+prerequisites: []
+publish: true
 ---
 <!-- PUBLIC_EXAMPLE_CONTENT -->
 

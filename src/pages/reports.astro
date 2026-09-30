@@ -1,5 +1,7 @@
 ---
 import Shell from '../layouts/Shell.astro';
-import { href } from '../data/navigation';
+import MaterialCards from '../components/MaterialCards.astro';
+import { publishedMaterials } from '../data/materials';
+const entries = (await publishedMaterials()).filter(e => e.data.kind === 'analysis');
 ---
-<Shell active="reports/" title="调研报告"><header class="page-intro shell-width" data-reveal><span class="eyebrow">RESEARCH SYNTHESIS</span><h1>让资料形成可讨论的判断</h1><p>报告关联技术专题和原始证据，区分已有事实、分析判断与待验证的研究假设。</p></header><div class="shell-width"><a class="report-card" href={href('notes/survey-framework/')} data-reveal><span class="eyebrow">RESEARCH FRAMEWORK</span><h2>调研范围与证据标准</h2><p>明确调研如何分类、代表性工作如何记录，以及不同路线如何在共同条件下比较。</p><div class="report-meta"><span>调研框架</span><span>2026-09-30</span></div></a><div class="report-outline"><div data-reveal><h3>技术全景</h3><p>逐步补充路线、问题与代表性方法。</p></div><div data-reveal><h3>方案比较</h3><p>整理实验条件、适用边界与组合关系。</p></div><div data-reveal><h3>研究问题</h3><p>从证据不足和方法局限中提炼选题。</p></div></div></div></Shell>
+<Shell title="比较与研究问题"><header class="page-intro shell-width" data-reveal><span class="eyebrow">SYNTHESIZE & VERIFY</span><h1>把阅读积累为研究判断</h1><p>比较方法的前提与证据，梳理当前覆盖范围，再将不确定的问题转成可以验证的方案。</p></header><div class="shell-width collection-body"><MaterialCards entries={entries} /></div></Shell>

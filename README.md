@@ -1,6 +1,6 @@
 # Token Economy Lab
 
-面向 Agent Token 经济优化的研究与学习网站。本仓库公开主题、组件、动画、内容模板与布局示例；系统性文献调研将在网站迁移完成后推进。
+面向 Agent Token 经济优化的研究与学习网站。本仓库公开主题、组件、动画、内容模板与布局示例；学习正文与研究证据由私有仓库维护。
 
 正式站点：[token-economy-lab.github.io](https://token-economy-lab.github.io/)。正式站点使用共享密码解密，仓库中的示例内容可以公开阅读。
 
@@ -26,10 +26,11 @@ npm run dev
 ```bash
 npm run audit:public
 npm run test:safety
+npm run test:content
 npm run build:examples
 ```
 
-示例构建检查 14 个路由、内部链接和资源路径。它强制使用公开示例，不加载本机 `.env`，也不生成可发布的 `dist/`。公开 CI 不上传正文或构建产物。
+示例构建保留原有 14 个路由，新增业务与系统入口，并根据已发布条目生成其余页面清单。检查全部内部链接、前置阅读、资源与草稿隔离。它强制使用公开示例，不加载本机 `.env`，也不生成可发布的 `dist/`。公开 CI 不上传正文或构建产物。
 
 ## 私有内容接口
 
@@ -42,9 +43,14 @@ section: topics # 基础笔记使用 foundations
 minutes: 5
 status: 待核验 # 基础笔记 / 专题框架 / 已核验 / 待核验
 updated: '2026-09-30'
+kind: tutorial # guide / topic / tutorial / paper / system / case / analysis
+level: 入门 # 入门 / 进阶 / 研究
+topics: [cache]
+prerequisites: [first-principles]
+publish: false
 ```
 
-`CONTENT_DIR` 指定笔记目录。现有七个专题及两篇基础笔记使用 `examples/notes/` 中相同的文件名。
+`CONTENT_DIR` 指定笔记目录，递归读取 Markdown。现有七个专题及两篇基础笔记保留原文件名与 URL；新增条目按相对路径生成 `/materials/<id>/`。新稿默认隐藏，只有 `publish: true` 才生成页面。为平滑迁移，原九篇无新增字段时仍按旧发布状态处理；显式隐藏旧页会被拒绝。详见 [编写规范与模板](docs/CONTENT.md)。
 
 授权维护者可将两个本机仓库并列放置，复制 `.env.example` 为 `.env`，填写私有目录和访问密码，然后运行：
 

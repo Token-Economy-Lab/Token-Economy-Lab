@@ -1,9 +1,10 @@
 import { existsSync } from 'node:fs';
-import { readdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { readdir, readFile, realpath, rm, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { noteIds } from './policy.mjs';
 import { releaseDigest } from './release-digest.mjs';
+import { readMaterials } from './content-policy.mjs';
 
 const mode = process.argv[2];
 if (!['examples', 'private'].includes(mode)) throw new Error('Choose examples or private build mode.');
@@ -38,6 +39,13 @@ function run(file, args = []) {
   const result = spawnSync(process.execPath, [file, ...args], { env, stdio: 'inherit' });
   if (result.status !== 0) process.exit(result.status || 1);
 }
+const materials = await readMaterials(env.CONTENT_DIR);
+if (mode === 'private') for (const entry of materials.entries) if (entry.raw.includes('PUBLIC_EXAMPLE_CONTENT')) throw new Error('Example notes cannot be published as a formal release.');
+await mkdir('build', { recursive: true });
+await writeFile('build/expected-routes.json', JSON.stringify(materials.routes));
+const publishedText = materials.published.map(e => e.raw).join('\n');
+const draftFragments = materials.entries.filter(e => !e.data.publish).flatMap(e => [e.data.title, ...e.raw.replace(/^---[\s\S]*?---\s*/, '').split('\n').filter(line => line.trim().length >= 24)]).filter(v => typeof v === 'string' && v.length >= 16 && !publishedText.includes(v));
+await writeFile('build/draft-fragments.json', JSON.stringify(draftFragments));
 run('node_modules/astro/astro.js', ['build']);
 run('scripts/verify.mjs', ['--plain']);
 if (mode === 'private') {
