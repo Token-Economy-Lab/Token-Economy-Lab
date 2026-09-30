@@ -6,7 +6,7 @@
 
 1. 账号持有人创建免费组织，保持名称准确。创建公开代码仓库、公开发布仓库，将现有私有仓库改名为 `token-economy-lab-private` 并迁入组织，始终保持 private。
 2. 公开代码使用审查后的全新 Git 历史；真实笔记只保存在私有仓库 `content/notes/`。
-3. 为发布仓库新建可写 deploy key，将私钥放入私有仓库 `PAGES_DEPLOY_KEY`。保留访问密码作为私有仓库 `SITE_PASSWORD`。
+3. 新组织默认禁止 deploy key。经组织所有者确认后，在 Settings → Member privileges → Deploy keys 启用此功能，再为发布仓库新建可写 deploy key，将私钥放入私有仓库 `PAGES_DEPLOY_KEY`。该开关适用于整个组织，具体密钥只绑定发布仓库。[GitHub 说明](https://docs.github.com/en/enterprise-cloud%40latest/organizations/managing-organization-settings/restricting-deploy-keys-in-your-organization)。保留访问密码作为私有仓库 `SITE_PASSWORD`。
 4. 为私有仓库创建仅有 Actions 写权限的专用 fine-grained token，并保存为公开代码仓库 `PRIVATE_PUBLISH_TOKEN`。不要把凭据发在聊天或提交到 Git。
 5. 推送公开代码 `main`。`Example build and audit` 成功后自动触发私有正式构建；首次可手动触发私有 `deploy.yml`。
 6. 首次加密产物到达发布仓库后，在 Settings → Pages 设置 `gh-pages` 分支 `/`，开启 HTTPS。
