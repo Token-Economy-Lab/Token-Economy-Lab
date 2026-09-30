@@ -47,6 +47,11 @@ kind: tutorial # guide / topic / tutorial / paper / system / case / analysis
 level: 入门 # 入门 / 进阶 / 研究
 topics: [cache]
 prerequisites: [first-principles]
+course: cache # foundations 或七个专题
+order: 100 # 同课程内唯一，先修在前
+outcomes: [解释本章机制并完成练习]
+studyMinutes: 30 # 含练习；minutes 只表示笔记阅读
+sequence: 1 # 可选，教程显示顺序
 publish: false
 ```
 

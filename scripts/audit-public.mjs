@@ -2,6 +2,8 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { resolve, extname } from 'node:path';
 import assert from 'node:assert/strict';
+import { parse } from 'yaml';
+import { noteIds } from './policy.mjs';
 
 const args = process.argv.slice(2);
 const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined;
@@ -14,7 +16,13 @@ if (option('--private-dir')) {
   const dir = resolve(option('--private-dir'));
   const contentFiles = folder => readdirSync(folder, { withFileTypes: true }).flatMap(e => e.isDirectory() ? contentFiles(resolve(folder, e.name)) : e.name.endsWith('.md') ? [resolve(folder, e.name)] : []);
   for (const file of contentFiles(dir)) {
-    const text = readFileSync(file, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
+    const raw = readFileSync(file, 'utf8');
+    const metadata = parse(raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] || '');
+    // The legacy topic labels were intentionally public before content separation.
+    // New chapter titles, descriptions and outcomes remain private.
+    const id = file.slice(dir.length + 1).replaceAll('\\', '/').replace(/\.md$/, '');
+    for (const value of [noteIds.includes(id) ? undefined : metadata?.title, metadata?.description, ...(metadata?.outcomes || [])]) if (typeof value === 'string' && value.length >= 16) forbiddenFragments.push(value);
+    const text = raw.replace(/^---[\s\S]*?---\s*/, '');
     for (const line of text.split('\n')) {
       const fragment = line.trim().replace(/^[-#*>\d.\s]+/, '');
       if (fragment.length >= 24) forbiddenFragments.push(fragment);

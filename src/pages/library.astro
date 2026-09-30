@@ -1,7 +1,17 @@
 ---
 import Shell from '../layouts/Shell.astro';
 import MaterialCards from '../components/MaterialCards.astro';
-import { publishedMaterials } from '../data/materials';
+import { publishedMaterials, type Material } from '../data/materials';
 const papers = (await publishedMaterials()).filter(e => e.data.kind === 'paper');
+const tracks = [
+ {id:'cache',title:'缓存与计算复用',description:'分页内存 → 精确前缀 → 跨文档融合'},
+ {id:'agent',title:'Agent 预算与成本决策',description:'BATS → CTA → AnySearch → 多轮与全局预算'},
+ {id:'reasoning',title:'模型内部思考与测试时计算',description:'难度分配 → 长度控制 → 思维链压缩'},
+ {id:'context',title:'上下文压缩与历史管理',description:'Token 分类 → 简单屏蔽与摘要的对照'},
+ {id:'routing',title:'模型选择与路由',description:'偏好数据 → 阈值校准 → 分布变化'},
+ {id:'scheduling',title:'服务调度与资源分离',description:'阶段干扰 → KV 传输 → Goodput'},
+ {id:'evaluation',title:'任务效果、成本与可复现性',description:'准确率与成本一起比较'},
+];
+const trackOf = (e: Material) => e.data.paperTrack ?? (e.data.topics.includes('cache') ? 'cache' : 'agent');
 ---
-<Shell active="library/" title="论文精读"><header class="page-intro shell-width" data-reveal><span class="eyebrow">READ THE METHOD, QUESTION THE EVIDENCE</span><h1>从代表论文理解技术路线</h1><p>每篇材料重建方法流程、解读关键图表，并保留实验条件、局限与核验状态。来源核验与独立复现分别记录。</p></header><div class="shell-width collection-body"><section class="collection-section"><div class="collection-heading"><h2>缓存与计算复用</h2><span>内存管理 → 前缀复用 → 缓存融合</span></div><MaterialCards entries={papers.filter(e => e.data.topics.includes('cache'))} /></section><section class="collection-section"><div class="collection-heading"><h2>Agent 预算与成本决策</h2><span>预算感知 → 探索与停止 → 策略学习</span></div><MaterialCards entries={papers.filter(e => e.data.topics.includes('budget'))} /></section><div class="reading-callout"><a href="/reports/">比较方法与适用条件</a><a href="/systems/">查看系统实现与业务案例</a></div></div></Shell>
+<Shell active="library/" title="论文精读"><header class="page-intro shell-width" data-reveal><span class="eyebrow">READ THE METHOD, QUESTION THE EVIDENCE</span><h1>从代表论文理解技术路线</h1><p>按机制与问题组织 {papers.length} 篇精读。每篇包含方法图、流程、实验条件、结果解读、失败边界和可执行对照。全文核验与独立复现分别记录。</p></header><div class="shell-width collection-body">{tracks.map(t => papers.some(e => trackOf(e) === t.id) && <section class="collection-section" data-paper-track={t.id}><div class="collection-heading"><h2>{t.title}</h2><span>{t.description}</span></div><MaterialCards entries={papers.filter(e => trackOf(e) === t.id)} /></section>)}<div class="reading-callout"><a href="/reports/">比较方法与适用条件</a><a href="/systems/">查看系统实现与业务案例</a></div></div></Shell>

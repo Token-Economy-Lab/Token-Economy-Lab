@@ -1,0 +1,5 @@
+---
+import { materialHref, type Material } from '../data/materials';
+const { entries, current } = Astro.props as {entries: Material[], current?: string};
+---
+<ol class="chapter-list">{entries.map((e,i) => <li><a class:list={{selected:e.id === current}} aria-current={e.id === current ? 'page' : undefined} href={materialHref(e)}><span class="chapter-number">{String(i+1).padStart(2,'0')}</span><span>{e.data.title}</span></a></li>)}</ol>

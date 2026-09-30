@@ -9,6 +9,10 @@ kind: paper
 level: 进阶
 topics: [evaluation]
 prerequisites: [first-principles]
+course: evaluation # foundations 或七个专题
+order: 100 # 同课程内唯一；先修在前
+outcomes: [待填写具体完成目标]
+studyMinutes: 30
 publish: false
 ---
 
@@ -22,7 +26,7 @@ publish: false
 
 待填写。
 
-## 方法流程
+## 机制图与流程 / 伪代码
 
 待填写。
 
@@ -38,7 +42,7 @@ publish: false
 
 待填写。
 
-## 局限
+## 失败边界与局限
 
 待填写。
 
@@ -49,3 +53,7 @@ publish: false
 ## 信息核验与独立复现
 
 待填写。
+
+## 可执行对照
+
+固定条件、基线、步骤、指标和证伪条件；标明未执行或实际复现状态。

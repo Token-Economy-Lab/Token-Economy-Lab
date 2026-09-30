@@ -9,6 +9,10 @@ kind: tutorial
 level: 进阶
 topics: [evaluation]
 prerequisites: [first-principles]
+course: evaluation # foundations 或七个专题
+order: 100 # 同课程内唯一；先修在前
+outcomes: [待填写具体完成目标]
+studyMinutes: 30
 publish: false
 ---
 
@@ -41,3 +45,7 @@ publish: false
 ## 深入阅读
 
 待填写。
+
+## 可复制练习与预期结果
+
+数据、操作或标准库回放、解答及适用边界。

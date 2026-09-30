@@ -21,6 +21,7 @@ const expected = routes.map(route => route.slice(1) + 'index.html').sort();
 assert.deepEqual(html.map(file => relative(plain, file)).sort(), expected, 'Expected all published site routes.');
 const privateFragments = [];
 const draftFragments = JSON.parse(await readFile('build/draft-fragments.json', 'utf8'));
+const metadataFragments = JSON.parse(await readFile('build/metadata-fragments.json', 'utf8'));
 for (const file of rawFiles.filter(p => ['.html', '.js', '.css', '.svg', '.json', '.txt'].includes(extname(p)))) {
   const data = await readFile(file, 'utf8');
   for (const fragment of draftFragments) assert(!data.includes(fragment), 'Unpublished draft in output.');
@@ -69,6 +70,7 @@ if (process.argv.includes('--plain')) {
     for (const fragment of draftFragments) assert(!data.includes(fragment), 'Unpublished draft in public output.');
     assert(!data.includes('STATICRYPT_PASSWORD='), 'Password assignment in output.');
     if (process.env.STATICRYPT_PASSWORD) assert(!data.includes(process.env.STATICRYPT_PASSWORD), 'Password in output.');
+    for (const fragment of metadataFragments) assert(!data.includes(fragment), 'Unencrypted material metadata in output.');
     for (const fragment of privateFragments) assert(!data.includes(fragment), 'Unencrypted note content in output.');
     if (ext === '.html') assert(data.includes('staticryptEncryptedMsgUniqueVariableName'), 'Missing encryption marker.');
   }

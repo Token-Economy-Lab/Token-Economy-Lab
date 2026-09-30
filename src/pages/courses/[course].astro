@@ -1,0 +1,11 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import { courses, courseChapters, materialHref, publishedMaterials } from '../../data/materials';
+export async function getStaticPaths() {
+ const all = await publishedMaterials();
+ return courses.filter(c => courseChapters(all,c.id).length).map(course => ({params:{course:course.id},props:{course,chapters:courseChapters(all,course.id)}}));
+}
+const {course,chapters} = Astro.props;
+const byId = new Map((await publishedMaterials()).map(e => [e.id,e]));
+---
+<Shell active="learn/" title={`${course.title} · 课程目录`}><header class="page-intro shell-width" data-reveal><span class="eyebrow">COURSE / {chapters.length} CHAPTERS</span><h1>{course.title}</h1><p>{course.description}</p><a class="text-link" href="/learn/">返回全站课程</a></header><div class="shell-width course-body"><ol class="curriculum">{chapters.map((e,i) => <li data-reveal><span class="step-number">{String(i+1).padStart(2,'0')}</span><div><a class="chapter-title" href={materialHref(e)}>{e.data.title}</a><p>{e.data.description}</p><div class="chapter-goal"><strong>学完能做</strong>{e.data.outcomes.map(o => <span>{o}</span>)}</div><div class="chapter-prior"><strong>先修</strong>{e.data.prerequisites.length ? e.data.prerequisites.map(id => <a href={materialHref(id)}>{byId.get(id)?.data.title}</a>) : <span>从这一章开始</span>}</div><small>笔记阅读约 {e.data.minutes} 分钟{e.data.studyMinutes && ` · 学习任务约 ${e.data.studyMinutes} 分钟`}</small>{chapters[i+1] && <a class="chapter-next" href={materialHref(chapters[i+1])}>下一章：{chapters[i+1].data.title} →</a>}</div></li>)}</ol></div></Shell>

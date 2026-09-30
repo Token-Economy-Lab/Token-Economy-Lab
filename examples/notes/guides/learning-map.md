@@ -10,6 +10,10 @@ level: 入门
 topics: [evaluation]
 prerequisites: [first-principles]
 publish: true
+course: foundations
+order: 20
+outcomes: [完成示例章节的学习任务]
+studyMinutes: 15
 ---
 
 PUBLIC_EXAMPLE_CONTENT

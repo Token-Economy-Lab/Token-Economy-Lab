@@ -46,6 +46,10 @@ await writeFile('build/expected-routes.json', JSON.stringify(materials.routes));
 const publishedText = materials.published.map(e => e.raw).join('\n');
 const draftFragments = materials.entries.filter(e => !e.data.publish).flatMap(e => [e.data.title, ...e.raw.replace(/^---[\s\S]*?---\s*/, '').split('\n').filter(line => line.trim().length >= 24)]).filter(v => typeof v === 'string' && v.length >= 16 && !publishedText.includes(v));
 await writeFile('build/draft-fragments.json', JSON.stringify(draftFragments));
+// Course directories introduce private titles, descriptions and learning outcomes
+// outside the prose wrapper. They must stay in encrypted HTML as well.
+const metadataFragments = [...new Set(materials.published.flatMap(e => [e.data.title, e.data.description, ...(e.data.outcomes || [])]).filter(v => typeof v === 'string' && v.length >= 16))];
+await writeFile('build/metadata-fragments.json', JSON.stringify(metadataFragments));
 run('node_modules/astro/astro.js', ['build']);
 run('scripts/verify.mjs', ['--plain']);
 if (mode === 'private') {

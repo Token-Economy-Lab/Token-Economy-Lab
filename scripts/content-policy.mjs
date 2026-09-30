@@ -5,6 +5,8 @@ import { parse } from 'yaml';
 import { noteIds, routes as baseRoutes } from './policy.mjs';
 export const kinds = ['guide', 'topic', 'tutorial', 'paper', 'system', 'case', 'analysis'];
 export const levels = ['入门', '进阶', '研究'];
+export const courseIds = ['foundations', 'context', 'budget', 'routing', 'cache', 'inference', 'scheduling', 'evaluation'];
+const paperTracks = ['cache', 'agent', 'reasoning', 'context', 'routing', 'scheduling', 'evaluation'];
 export const materialPath = id => `/materials/${id}/`;
 export async function readMaterials(dir) {
   const entries = [];
@@ -40,6 +42,15 @@ export async function readMaterials(dir) {
         assert(levels.includes(data.level), 'Invalid reading level.');
         assert(Array.isArray(data.topics) && data.topics.every(t => noteIds.slice(0, 7).includes(t)), 'Invalid material topics.');
         assert(Array.isArray(data.prerequisites) && data.prerequisites.every(p => typeof p === 'string'), 'Invalid prerequisite list.');
+        if (data.course !== undefined) {
+          assert(courseIds.includes(data.course), 'Invalid course.');
+          assert(Number.isInteger(data.order) && data.order >= 0, 'Course chapter order is required.');
+          assert(Array.isArray(data.outcomes) && data.outcomes.length > 0 && data.outcomes.every(o => typeof o === 'string' && o.trim()), 'Course learning outcomes are required.');
+          assert(Number.isFinite(data.studyMinutes) && data.studyMinutes > 0, 'Study task time is required.');
+        }
+        if (data.sequence !== undefined) assert(Number.isInteger(data.sequence) && data.sequence >= 0, 'Invalid tutorial sequence.');
+        if (data.paperTrack !== undefined) assert(data.kind === 'paper' && paperTracks.includes(data.paperTrack), 'Invalid paper track.');
+        if (data.exercise !== undefined) assert(typeof data.exercise === 'boolean', 'Invalid exercise flag.');
       }
       entries.push({ id, data: { ...data, publish }, raw, path });
     }
@@ -47,6 +58,12 @@ export async function readMaterials(dir) {
   await walk(dir);
   const published = entries.filter(e => e.data.publish);
   const identifiers = new Set(published.map(e => e.id));
+  const chapterOrders = new Set();
+  for (const entry of published.filter(e => e.data.course)) {
+    const key = `${entry.data.course}:${entry.data.order}`;
+    assert(!chapterOrders.has(key), 'Duplicate course chapter order.');
+    chapterOrders.add(key);
+  }
   for (const entry of published) for (const id of entry.data.prerequisites) assert(identifiers.has(id), 'Prerequisite must reference a published material.');
   const visiting = new Set(), visited = new Set();
   const byId = new Map(published.map(e => [e.id, e]));
@@ -58,8 +75,13 @@ export async function readMaterials(dir) {
     visiting.delete(id); visited.add(id);
   }
   for (const id of identifiers) visit(id);
+  for (const entry of published.filter(e => e.data.course)) for (const id of entry.data.prerequisites) {
+    const prior = byId.get(id);
+    if (prior.data.course === entry.data.course) assert(prior.data.order < entry.data.order, 'Course prerequisite must precede the chapter.');
+  }
   for (const id of noteIds) assert(identifiers.has(id), 'A required legacy note must remain published.');
   const links = new Map(noteIds.map(id => [id, noteIds.slice(0, 7).includes(id) ? `/topics/${id}/` : `/notes/${id}/`]));
   for (const entry of published) if (!links.has(entry.id)) links.set(entry.id, materialPath(entry.id));
-  return { entries, published, routes: [...baseRoutes, '/systems/', ...published.filter(e => !noteIds.includes(e.id)).map(e => materialPath(e.id))].sort(), links };
+  const courseRoutes = [...new Set(published.map(e => e.data.course).filter(Boolean))].map(c => `/courses/${c}/`);
+  return { entries, published, routes: [...baseRoutes, '/systems/', ...courseRoutes, ...published.filter(e => !noteIds.includes(e.id)).map(e => materialPath(e.id))].sort(), links };
 }

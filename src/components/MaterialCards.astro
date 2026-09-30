@@ -3,5 +3,5 @@ import { labels, materialHref, type Material } from '../data/materials';
 const { entries = [], compact = false } = Astro.props as { entries: Material[], compact?: boolean };
 ---
 <div class:list={{ 'material-grid': true, 'material-compact': compact }}>
-  {entries.map(entry => <a class="material-card" href={materialHref(entry)} data-reveal><div class="material-card-meta"><span>{labels[entry.data.kind]}</span><span>{entry.data.level} · {entry.data.minutes} 分钟</span></div><h3>{entry.data.title}</h3><p>{entry.data.description}</p><span class="material-card-footer">{entry.data.status}<span aria-hidden="true">↗</span></span></a>)}
+  {entries.map(entry => <a class="material-card" href={materialHref(entry)} data-reveal><div class="material-card-meta"><span>{labels[entry.data.kind]}</span><span>{entry.data.level} · 笔记 {entry.data.minutes} 分钟</span></div><h3>{entry.data.title}</h3><p>{entry.data.description}</p><span class="material-card-footer">{entry.data.status}<span aria-hidden="true">↗</span></span></a>)}
 </div>

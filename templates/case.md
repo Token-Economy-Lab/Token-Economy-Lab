@@ -9,6 +9,10 @@ kind: case
 level: 进阶
 topics: [evaluation]
 prerequisites: [first-principles]
+course: evaluation # foundations 或七个专题
+order: 100 # 同课程内唯一；先修在前
+outcomes: [待填写具体完成目标]
+studyMinutes: 30
 publish: false
 ---
 

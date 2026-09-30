@@ -31,6 +31,11 @@ try {
   run('verify.mjs', 'Unencrypted note content');
   run('verify-release.mjs', 'Release files changed');
   await writeFile(gatePath, gate);
+  const metadata = JSON.parse(await readFile(join(root, 'build/metadata-fragments.json'), 'utf8'));
+  assert(metadata.length, 'Expected material metadata for the leak test.');
+  await writeFile(gatePath, gate + metadata[0]);
+  run('verify.mjs', 'Unencrypted material metadata');
+  await writeFile(gatePath, gate);
   const draftFragments = JSON.parse(await readFile(join(root, 'build/draft-fragments.json'), 'utf8'));
   if (draftFragments.length) {
     await writeFile(gatePath, gate + draftFragments[0]);
@@ -44,5 +49,5 @@ try {
   await writeFile(missing, encrypted);
   await writeFile(plainPath, article.replace('href="/learn/"', 'href="/missing-route/"'));
   run('verify.mjs', 'Broken local link');
-  console.log('PASS: unapproved assets, leaked note text, modified release files, missing encrypted pages and broken internal links prevent publication.');
+  console.log('PASS: unapproved assets, leaked text/metadata, modified release files, missing encrypted pages and broken internal links prevent publication.');
 } finally { await rm(root, { recursive: true, force: true }); }

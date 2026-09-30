@@ -15,6 +15,13 @@ const notes = defineCollection({
     level: z.enum(['入门', '进阶', '研究']).default('入门'),
     topics: z.array(z.enum(['context', 'budget', 'routing', 'cache', 'inference', 'scheduling', 'evaluation'])).default([]),
     prerequisites: z.array(z.string()).default([]),
+    course: z.enum(['foundations', 'context', 'budget', 'routing', 'cache', 'inference', 'scheduling', 'evaluation']).optional(),
+    order: z.number().int().nonnegative().optional(),
+    outcomes: z.array(z.string()).default([]),
+    studyMinutes: z.number().positive().optional(),
+    sequence: z.number().int().nonnegative().optional(),
+    paperTrack: z.enum(['cache', 'agent', 'reasoning', 'context', 'routing', 'scheduling', 'evaluation']).optional(),
+    exercise: z.boolean().default(false),
     publish: z.boolean().optional(),
   }),
 });

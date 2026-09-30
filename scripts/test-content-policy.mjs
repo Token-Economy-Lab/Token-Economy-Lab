@@ -9,6 +9,8 @@ try {
   const baseline = await readMaterials(root);
   assert(!baseline.routes.includes('/materials/guides/draft-sample/'));
   assert(baseline.routes.includes('/materials/guides/learning-map/'));
+  assert(baseline.routes.includes('/courses/foundations/'));
+  assert(baseline.routes.includes('/courses/cache/'));
   const file = join(root, 'guides/learning-map.md');
   const original = await readFile(file, 'utf8');
   await writeFile(file, original.replace('prerequisites: [first-principles]', 'prerequisites: [guides/draft-sample]'));
@@ -16,6 +18,21 @@ try {
   await writeFile(file, original.replace('publish: true', 'publish: yes'));
   await assert.rejects(readMaterials(root), /publish must be a boolean/);
   await writeFile(file, original);
+  await writeFile(file, original.replace('course: foundations', 'course: unknown-course'));
+  await assert.rejects(readMaterials(root), /Invalid course/);
+  await writeFile(file, original.replace(/^order:.*\n/m, ''));
+  await assert.rejects(readMaterials(root), /chapter order is required/);
+  await writeFile(file, original.replace(/^outcomes:.*$/m, 'outcomes: []'));
+  await assert.rejects(readMaterials(root), /learning outcomes are required/);
+  await writeFile(file, original.replace(/^studyMinutes:.*$/m, 'studyMinutes: 0'));
+  await assert.rejects(readMaterials(root), /Study task time is required/);
+  await writeFile(file, original.replace('order: 20', 'order: 10'));
+  await assert.rejects(readMaterials(root), /Duplicate course chapter order/);
+  await writeFile(file, original);
+  const forwardChapter = join(root, 'guides/forward-sample.md');
+  await writeFile(forwardChapter, original.replace('prerequisites: [first-principles]', 'prerequisites: [guides/learning-map]').replace('order: 20', 'order: 15'));
+  await assert.rejects(readMaterials(root), /Course prerequisite must precede/);
+  await rm(forwardChapter);
   await writeFile(file, original.replace('prerequisites: [first-principles]', 'prerequisites: [guides/learning-map]'));
   await assert.rejects(readMaterials(root), /Circular prerequisite/);
   await writeFile(file, original);
@@ -35,5 +52,5 @@ try {
   const legacyFile = join(root, 'cache.md');
   await writeFile(legacyFile, (await readFile(legacyFile, 'utf8')).replace('publish: true', 'publish: false'));
   await assert.rejects(readMaterials(root), /legacy note must remain published/);
-  console.log('PASS: nested routes, default-hidden drafts, published prerequisites, cycle rejection, boolean flags, symlinks and legacy compatibility.');
+  console.log('PASS: course routes, ordered prerequisites/outcomes, duplicate rejection, default-hidden drafts, cycles, boolean flags, symlinks and legacy compatibility.');
 } finally { await rm(root, { recursive: true, force: true }); }
