@@ -23,9 +23,9 @@ if (option('--private-dir')) {
 const secretValues = [];
 if (option('--secret-dir')) {
   const dir = resolve(option('--secret-dir'));
-  for (const name of readdirSync(dir).filter(n => n === 'site-password' || n.startsWith('pages_deploy_key') && !n.endsWith('.pub'))) {
+  for (const name of readdirSync(dir).filter(n => n.startsWith('site-password') || n.startsWith('pages_deploy_key') && !n.endsWith('.pub'))) {
     const value = readFileSync(resolve(dir, name), 'utf8').trim();
-    if (value.length >= 16) secretValues.push(value);
+    if (value.length) secretValues.push(value);
   }
 }
 let blobs = 0;
@@ -46,7 +46,7 @@ for (const item of refs) {
   const text = git('cat-file', 'blob', sha);
   assert(!/-----BEGIN (?:OPENSSH|RSA|EC|DSA|ENCRYPTED)? ?PRIVATE KEY-----/.test(text), 'Private key in public history.');
   assert(!/\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})\b/.test(text), 'GitHub credential in public history.');
-  assert(!/STATICRYPT_PASSWORD\s*=\s*[A-Za-z0-9_\-]{16,}/.test(text), 'Literal password assignment in public history.');
+  assert(!/STATICRYPT_PASSWORD\s*=\s*[A-Za-z0-9_\-]{14,}/.test(text), 'Literal password assignment in public history.');
   for (const value of secretValues) assert(!text.includes(value), 'Known secret in public history.');
   for (const fragment of forbiddenFragments) assert(!text.includes(fragment), 'Private note text in public history.');
   if (publication && path.endsWith('.html')) assert(text.includes('staticryptEncryptedMsgUniqueVariableName'), 'Plaintext HTML in publication history.');

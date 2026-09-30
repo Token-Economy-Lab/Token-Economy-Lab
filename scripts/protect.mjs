@@ -7,7 +7,7 @@ import { assetExtensions } from './policy.mjs';
 if(existsSync('.env')) process.loadEnvFile?.('.env');
 if (process.env.RELEASE_MODE !== 'private' || !process.env.CONTENT_DIR) throw new Error('Use npm run build with a private CONTENT_DIR to produce a release.');
 const password = process.env.STATICRYPT_PASSWORD;
-if (!password || password.length < 16) throw new Error('STATICRYPT_PASSWORD must contain at least 16 characters. No unencrypted release will be produced.');
+if (!password || password.length < 14) throw new Error('STATICRYPT_PASSWORD must contain at least 14 characters. No unencrypted release will be produced.');
 const source = resolve('build/plain'), destination = resolve('dist');
 await rm(destination, { recursive: true, force: true });
 await mkdir(destination, { recursive: true });

@@ -26,6 +26,7 @@ try {
   await rejects({}, 'CONTENT_DIR is required');
   await rejects({ CONTENT_DIR: join(code, 'examples/notes'), STATICRYPT_PASSWORD: 'example-only-test-password' }, 'outside the public code checkout');
   await rejects({ CONTENT_DIR: notes }, 'release password');
+  await rejects({ CONTENT_DIR: notes, STATICRYPT_PASSWORD: 't'.repeat(13) }, 'release password');
   await rejects({ CONTENT_DIR: notes, STATICRYPT_PASSWORD: 'example-only-test-password' }, 'required private note is missing');
   await cp('examples/notes', notes, { recursive: true });
   await rejects({ CONTENT_DIR: notes, STATICRYPT_PASSWORD: 'example-only-test-password' }, 'Example notes cannot be published');

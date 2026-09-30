@@ -21,7 +21,7 @@ if (mode === 'examples') {
   if (!env.CONTENT_DIR) throw new Error('CONTENT_DIR is required. Formal releases cannot use example notes.');
   const dir = await realpath(resolve(env.CONTENT_DIR));
   if (dir === root || dir.startsWith(root + sep)) throw new Error('Formal content must live outside the public code checkout.');
-  if (!env.STATICRYPT_PASSWORD || env.STATICRYPT_PASSWORD.length < 16) throw new Error('A release password of at least 16 characters is required.');
+  if (!env.STATICRYPT_PASSWORD || env.STATICRYPT_PASSWORD.length < 14) throw new Error('A release password of at least 14 characters is required.');
   const files = await readdir(dir);
   for (const id of noteIds) {
     if (!files.includes(`${id}.md`)) throw new Error('A required private note is missing.');
