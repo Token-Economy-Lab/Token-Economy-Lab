@@ -12,7 +12,8 @@
     "verify": "node scripts/verify.mjs",
     "verify:plain": "node scripts/verify.mjs --plain",
     "audit:public": "node scripts/audit-public.mjs",
-    "test:safety": "node scripts/test-build-safety.mjs"
+    "test:safety": "node scripts/test-build-safety.mjs",
+    "test:output": "node scripts/test-output-safety.mjs"
   },
   "dependencies": {
     "astro": "^5.13.5",

@@ -5,8 +5,9 @@ export default defineConfig({
   base: '/',
   output: 'static',
   outDir: './build/plain',
+  cacheDir: './.astro/cache',
   trailingSlash: 'always',
   build: { inlineStylesheets: 'never' },
-  vite: { build: { sourcemap: false } },
+  vite: { envDir: false, build: { sourcemap: false } },
   devToolbar: { enabled: false },
 });
