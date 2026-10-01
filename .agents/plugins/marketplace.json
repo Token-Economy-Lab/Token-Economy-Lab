@@ -1,0 +1,12 @@
+{
+  "name": "token-economy-lab-workflows",
+  "interface": { "displayName": "Research and Learning Workflows" },
+  "plugins": [
+    {
+      "name": "research-learning-site",
+      "source": { "source": "local", "path": "./plugins/research-learning-site" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}

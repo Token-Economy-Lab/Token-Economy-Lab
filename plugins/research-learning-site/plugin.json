@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "research-learning-site",
+  "version": "1.0.0",
+  "description": "Turn research literature into evidence-backed learning courses and maintainable learning websites.",
+  "author": { "name": "Token Economy Lab" },
+  "repository": "https://github.com/Token-Economy-Lab/Token-Economy-Lab",
+  "keywords": ["research", "papers", "learning", "markdown", "website"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "论文调研与学习网站",
+        "shortDescription": "将原始论文转化为分层课程、可验证练习和学习网站",
+        "longDescription": "从研究方向规划、原始证据与论文精读，到 Markdown 教学材料、双读者学习路径、网页阅读导航及经过验证的发布。支持继续维护既有项目，项目路径和权限在每次任务中解析。",
+        "developerName": "Token Economy Lab",
+        "category": "Productivity",
+        "defaultPrompt": ["围绕我的研究方向建立入门与研究两条学习路径，整理 Markdown 素材并搭建学习网站。"]
+      }
+    }
+  }
+}

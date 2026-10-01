@@ -83,3 +83,7 @@ npm run preview
 页面使用 StatiCrypt 加密。默认解锁只保存在当前标签页，可选择记住 7 天，锁定按钮清除本设备凭据。得到密码的人可保存或转发已解锁内容；该机制没有独立用户身份或单人撤权。发布目录默认拒绝 JSON、Source Map、图片和下载附件，加入新资源类型前应处理其中的私有内容。
 
 技术与设计：[Astro](https://docs.astro.build/en/guides/deploy/github/)、[StatiCrypt](https://github.com/robinmoisson/staticrypt)、[docs/DESIGN.md](docs/DESIGN.md)。
+
+## 可复用调研与学习 Skill
+
+[research-learning-site](plugins/research-learning-site/skills/research-learning-site/SKILL.md) 将论文调研、证据核验、分层 Markdown 课程与学习网站建设整理为可复用工作流。见 [安装与 ChatGPT 导入](docs/RESEARCH-SKILL.md)。包内只含通用指令和素材模板。

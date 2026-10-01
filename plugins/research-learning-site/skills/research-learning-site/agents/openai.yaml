@@ -1,0 +1,4 @@
+interface:
+  display_name: "论文调研与学习网站"
+  short_description: "将论文调研整理为循序渐进的学习课程，并搭建有证据可追溯的网站"
+  default_prompt: "使用 $research-learning-site，围绕我的研究方向建立入门和研究两条学习路径，整理 Markdown 材料并接入学习网站。"

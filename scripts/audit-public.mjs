@@ -25,7 +25,8 @@ if (option('--private-dir')) {
     const text = raw.replace(/^---[\s\S]*?---\s*/, '');
     for (const line of text.split('\n')) {
       const fragment = line.trim().replace(/^[-#*>\d.\s]+/, '');
-      if (fragment.length >= 24) forbiddenFragments.push(fragment);
+      // A Markdown table delimiter contains layout syntax, not note content.
+      if (fragment.length >= 24 && !/^\|(?:\s*:?-{3,}:?\s*\|)+$/.test(fragment)) forbiddenFragments.push(fragment);
     }
   }
 }
